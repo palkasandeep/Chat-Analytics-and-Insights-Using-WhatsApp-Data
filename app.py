@@ -1,153 +1,18 @@
-# import streamlit as st
-# import pandas as pd
-# import numpy as np
-# import matplotlib.pyplot as plt
-# import seaborn as sns
-# from wordcloud import WordCloud
-# from sklearn.feature_extraction.text import TfidfVectorizer
-# from sklearn.ensemble import RandomForestClassifier
-# from xgboost import XGBClassifier
-# from sklearn.model_selection import train_test_split, GridSearchCV
-# from sklearn.metrics import accuracy_score, classification_report
-# from nltk.sentiment import SentimentIntensityAnalyzer
-# import nltk
-# import preprocesser
-# import helper
-#
-# nltk.download('vader_lexicon')
-#
-# # Sidebar
-# st.sidebar.title("📱 WhatsApp Chat Processor")
-#
-# uploaded_file = st.sidebar.file_uploader("📂 Upload a WhatsApp chat file", type=['txt'])
-#
-# if uploaded_file is not None:
-#     with st.spinner("Processing chat..."):
-#         bytes_data = uploaded_file.getvalue()
-#         data = bytes_data.decode("utf-8")
-#         df = preprocesser.preprocess(data)
-#
-#     st.header("🧾 Processed Chat Data")
-#     st.dataframe(df)
-#
-#     # User selection
-#     user_list = df['user'].unique().tolist()
-#     if 'group_notification' in user_list:
-#         user_list.remove('group_notification')
-#     user_list.sort()
-#     user_list.insert(0, "overall")
-#     selected_user = st.sidebar.selectbox("📊 Show Analysis for", user_list)
-#
-#     if st.sidebar.button("Show Analysis"):
-#         st.title("📈 Top Statistics")
-#         num_messages, words, num_mediaquery, links = helper.fetch_stats(selected_user, df)
-#
-#         col1, col2, col3, col4 = st.columns(4)
-#         with col1:
-#             st.header("Messages")
-#             st.write(num_messages)
-#         with col2:
-#             st.header("Words")
-#             st.write(words)
-#         with col3:
-#             st.header("Media")
-#             st.write(num_mediaquery)
-#         with col4:
-#             st.header("Links")
-#             st.write(links)
-#
-#         # Monthly Timeline
-#         st.title('🗓️ Monthly Timeline')
-#         timeline = helper.monthly_timeline(selected_user, df)
-#         fig, ax = plt.subplots()
-#         ax.plot(timeline['time'], timeline['message'], color='green')
-#         st.pyplot(fig)
-#
-#         # Sentiment Analysis
-#         st.title("😊 Sentiment Analysis")
-#         sia = SentimentIntensityAnalyzer()
-#         df['sentiment'] = df['message'].apply(lambda msg: sia.polarity_scores(msg)['compound'])
-#         df['sentiment_label'] = df['sentiment'].apply(
-#             lambda s: 'Positive' if s > 0 else ('Negative' if s < 0 else 'Neutral'))
-#
-#         sentiment_counts = df['sentiment_label'].value_counts()
-#         fig, ax = plt.subplots()
-#         ax.bar(sentiment_counts.index, sentiment_counts.values, color=['green', 'red', 'gray'])
-#         st.pyplot(fig)
-#
-#         # Word Cloud
-#         st.title("☁️ Word Cloud")
-#         text = " ".join(msg for msg in df['message'].dropna())
-#         wordcloud = WordCloud(width=800, height=400, background_color='black').generate(text)
-#         fig, ax = plt.subplots()
-#         ax.imshow(wordcloud, interpolation='bilinear')
-#         ax.axis('off')
-#         st.pyplot(fig)
-#
-#         # Emoji Analysis
-#         st.title("😎 Emoji Analysis")
-#         more_emojis = helper.emoji_helper(selected_user, df)
-#         if not more_emojis.empty:
-#             col1, col2 = st.columns(2)
-#             with col1:
-#                 st.dataframe(more_emojis)
-#             with col2:
-#                 fig, ax = plt.subplots()
-#                 ax.pie(more_emojis['Count'], labels=more_emojis['Emoji'], autopct='%1.1f%%')
-#                 st.pyplot(fig)
-#
-#         # Spam Detection with Advanced ML
-#         st.title("🛡️ Spam Detection (Random Forest & XGBoost)")
-#         df['spam'] = np.random.choice([0, 1], size=len(df))  # Mock binary labels for demo
-#
-#         vectorizer = TfidfVectorizer(stop_words='english', max_features=500)
-#         X = vectorizer.fit_transform(df['message'].fillna(""))
-#
-#         X_train, X_test, y_train, y_test = train_test_split(X, df['spam'], test_size=0.2, random_state=42)
-#
-#         # Random Forest
-#         st.subheader("🌲 Random Forest Classifier (with GridSearchCV)")
-#         rf_params = {
-#             'n_estimators': [50, 100],
-#             'max_depth': [None, 10, 20],
-#         }
-#         rf_grid = GridSearchCV(RandomForestClassifier(random_state=42), rf_params, cv=3, n_jobs=-1)
-#         rf_grid.fit(X_train, y_train)
-#         rf_pred = rf_grid.predict(X_test)
-#         rf_acc = accuracy_score(y_test, rf_pred)
-#         st.write(f"Random Forest Accuracy: **{rf_acc*100:.2f}%**")
-#         st.text(classification_report(y_test, rf_pred))
-#
-#         # XGBoost
-#         st.subheader("⚡ XGBoost Classifier (with GridSearchCV)")
-#         xgb_params = {
-#             'n_estimators': [50, 100],
-#             'max_depth': [3, 6],
-#             'learning_rate': [0.1, 0.2]
-#         }
-#         xgb_grid = GridSearchCV(XGBClassifier(use_label_encoder=False, eval_metric='logloss'), xgb_params, cv=3, n_jobs=-1)
-#         xgb_grid.fit(X_train, y_train)
-#         xgb_pred = xgb_grid.predict(X_test)
-#         xgb_acc = accuracy_score(y_test, xgb_pred)
-#         st.write(f"XGBoost Accuracy: **{xgb_acc*100:.2f}%**")
-#         st.text(classification_report(y_test, xgb_pred))
-#
-# else:
-#     st.sidebar.info("📎 Please upload a WhatsApp chat file to begin.")
 import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 from wordcloud import WordCloud
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.ensemble import RandomForestClassifier
-from xgboost import XGBClassifier
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report, ConfusionMatrixDisplay
-from nltk.sentiment import SentimentIntensityAnalyzer
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
+from nltk.sentiment import SentimentIntensityAnalyzer
 import nltk
 import preprocesser
 import helper
@@ -176,6 +41,7 @@ if uploaded_file is not None:
     selected_user = st.sidebar.selectbox("\U0001F4CA Show Analysis for", user_list)
 
     if st.sidebar.button("Show Analysis"):
+
         st.title("\U0001F4C8 Top Statistics")
         num_messages, words, num_mediaquery, links = helper.fetch_stats(selected_user, df)
 
@@ -193,7 +59,7 @@ if uploaded_file is not None:
             st.header("Links")
             st.write(links)
 
-        # Monthly Timeline + Prediction
+        # Monthly Timeline + Forecast
         st.title('\U0001F5D3️ Monthly Timeline with Forecast')
         timeline = helper.monthly_timeline(selected_user, df)
         timeline['time_index'] = np.arange(len(timeline))
@@ -262,43 +128,78 @@ if uploaded_file is not None:
                 st.pyplot(fig)
 
         # Spam Detection
-        st.title("\U0001F6E1️ Spam Detection (Random Forest & XGBoost)")
-        df['spam'] = np.random.choice([0, 1], size=len(df))
+        st.title("\U0001F6E1️ Spam Detection (4 Classifiers)")
+        df['spam'] = np.random.choice([0, 1], size=len(df))  # Dummy labels
         vectorizer = TfidfVectorizer(stop_words='english', max_features=500)
         X = vectorizer.fit_transform(df['message'].fillna(""))
         X_train, X_test, y_train, y_test = train_test_split(X, df['spam'], test_size=0.2, random_state=42)
 
-        # Random Forest
-        st.subheader("\U0001F332 Random Forest Classifier")
-        rf_params = {'n_estimators': [50, 100], 'max_depth': [None, 10, 20]}
-        rf_grid = GridSearchCV(RandomForestClassifier(random_state=42), rf_params, cv=3, n_jobs=-1)
-        rf_grid.fit(X_train, y_train)
-        rf_pred = rf_grid.predict(X_test)
-        rf_acc = accuracy_score(y_test, rf_pred)
-        st.write(f"Random Forest Accuracy: **{rf_acc * 100:.2f}%**")
+        # Logistic Regression
+        st.subheader("📊 Logistic Regression")
+        log_model = LogisticRegression(max_iter=1000)
+        log_model.fit(X_train, y_train)
+        log_pred = log_model.predict(X_test)
+        log_acc = accuracy_score(y_test, log_pred)
+        st.write(f"Accuracy: **{log_acc * 100:.2f}%**")
+        fig, ax = plt.subplots()
+        ConfusionMatrixDisplay.from_predictions(y_test, log_pred, ax=ax)
+        st.pyplot(fig)
+        st.text(classification_report(y_test, log_pred))
 
+        # Naive Bayes
+        st.subheader("🤖 Naive Bayes")
+        nb_model = MultinomialNB()
+        nb_model.fit(X_train, y_train)
+        nb_pred = nb_model.predict(X_test)
+        nb_acc = accuracy_score(y_test, nb_pred)
+        st.write(f"Accuracy: **{nb_acc * 100:.2f}%**")
+        fig, ax = plt.subplots()
+        ConfusionMatrixDisplay.from_predictions(y_test, nb_pred, ax=ax)
+        st.pyplot(fig)
+        st.text(classification_report(y_test, nb_pred))
+
+        # SVM
+        st.subheader("🧠 Support Vector Machine")
+        svm_model = SVC(kernel='linear')
+        svm_model.fit(X_train, y_train)
+        svm_pred = svm_model.predict(X_test)
+        svm_acc = accuracy_score(y_test, svm_pred)
+        st.write(f"Accuracy: **{svm_acc * 100:.2f}%**")
+        fig, ax = plt.subplots()
+        ConfusionMatrixDisplay.from_predictions(y_test, svm_pred, ax=ax)
+        st.pyplot(fig)
+        st.text(classification_report(y_test, svm_pred))
+
+        # Random Forest
+        st.subheader("🌲 Random Forest")
+        rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+        rf_model.fit(X_train, y_train)
+        rf_pred = rf_model.predict(X_test)
+        rf_acc = accuracy_score(y_test, rf_pred)
+        st.write(f"Accuracy: **{rf_acc * 100:.2f}%**")
         fig, ax = plt.subplots()
         ConfusionMatrixDisplay.from_predictions(y_test, rf_pred, ax=ax)
-        ax.set_title("Random Forest Confusion Matrix")
         st.pyplot(fig)
-
         st.text(classification_report(y_test, rf_pred))
 
-        # XGBoost
-        st.subheader("\u26A1 XGBoost Classifier")
-        xgb_params = {'n_estimators': [50, 100], 'max_depth': [3, 6], 'learning_rate': [0.1, 0.2]}
-        xgb_grid = GridSearchCV(XGBClassifier(use_label_encoder=False, eval_metric='logloss'), xgb_params, cv=3, n_jobs=-1)
-        xgb_grid.fit(X_train, y_train)
-        xgb_pred = xgb_grid.predict(X_test)
-        xgb_acc = accuracy_score(y_test, xgb_pred)
-        st.write(f"XGBoost Accuracy: **{xgb_acc * 100:.2f}%**")
+        # Accuracy Comparison Graph
+        st.subheader("📊 Accuracy Comparison Chart")
+        model_names = ["Logistic Regression", "Naive Bayes", "SVM", "Random Forest"]
+        accuracies = [log_acc * 100, nb_acc * 100, svm_acc * 100, rf_acc * 100]
 
         fig, ax = plt.subplots()
-        ConfusionMatrixDisplay.from_predictions(y_test, xgb_pred, ax=ax)
-        ax.set_title("XGBoost Confusion Matrix")
-        st.pyplot(fig)
+        bars = ax.bar(model_names, accuracies, color=['blue', 'orange', 'green', 'purple'])
+        ax.set_ylim([0, 100])
+        ax.set_ylabel("Accuracy (%)")
+        ax.set_title("Model Accuracy Comparison")
 
-        st.text(classification_report(y_test, xgb_pred))
+        for bar in bars:
+            height = bar.get_height()
+            ax.annotate(f'{height:.2f}%', xy=(bar.get_x() + bar.get_width() / 2, height),
+                        xytext=(0, 5), textcoords="offset points",
+                        ha='center', va='bottom')
+
+        st.pyplot(fig)
 
 else:
     st.sidebar.info("\U0001F4CE Please upload a WhatsApp chat file to begin.")
